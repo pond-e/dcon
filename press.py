@@ -9,6 +9,7 @@ import os
 # SPIバスを開く
 spi = spidev.SpiDev()
 spi.open(0,0)
+spi.max_speed_hz = 100000 # 100kHz いるかもしれない
 
 # MCP3008から値を読み取るメソッド
 # チャンネル番号は0から7まで
