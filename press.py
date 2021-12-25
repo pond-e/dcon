@@ -5,11 +5,12 @@ import sys
 import spidev
 import time
 import os
+import datetime
 
 # SPIバスを開く
 spi = spidev.SpiDev()
 spi.open(0,0)
-spi.max_speed_hz = 100000 # 100kHz いるかもしれない
+spi.max_speed_hz = 100000 # 100kHz サンプリングレートの設定(必ずいる)
 
 # MCP3008から値を読み取るメソッド
 # チャンネル番号は0から7まで
@@ -26,21 +27,43 @@ def ConvertVolts(data,places):
  return volts
 
 # センサのチャンネルの宣言
-force_channel = 0
+force_channel_0 = 0
+force_channel_1 = 1
+force_channel_2 = 2
 
 # 値を読むのを遅らせる
 delay = 0.25
+
+# ファイルへ書き出し準備
+now = datetime.datetime.now()
+# 現在時刻を織り込んだファイル名を生成
+fmt_name = "/home/pi/data/press_logs_{0:%Y%m%d-%H%M%S}.csv".format(now)
+f_press = open(fmt_name, 'w')   # 書き込みファイル
+value = "s, V0, V1, V2"  # header行への書き込み内容
+f_press.write(value+"\n")
+now_f = time.time()
+
+# 電圧をテスターで実測する(今回はデータシートから)
+Vref = 1
 
 # メインクラス
 if __name__ == '__main__':
  try:
   while True:
-   data = ReadChannel(force_channel)
-   print("A/D Converter: {0}".format(data))
-   volts = ConvertVolts(data,3)
-   print("Volts: {0}".format(volts))
+   data_0 = ReadChannel(force_channel_0)
+   data_1 = ReadChannel(force_channel_1)
+   data_2 = ReadChannel(force_channel_2)
+   print("A/D Converter: {0}, {1}, {2}".format(data_0, data_1, data_2))
+   volts_0 = ConvertVolts(data_0, Vref)
+   volts_1 = ConvertVolts(data_1, Vref)
+   volts_2 = ConvertVolts(data_2, Vref)
+   print("Volts: {0}, {1}, {2}".format(volts_0, volts_1, volts_2))
+   now = time.time() - now_f
+   value = "%s,%6.2f,%6.2f,%6.2f" % (now, volts_0, volts_1, volts_2) # 時間, 電圧
+   f_press.write(value + "\n")  # ファイルを出力
    time.sleep(delay)
 # 何か入力したら終了
  except KeyboardInterrupt:
   spi.close()
   sys.exit(0)
+  f_press.close()
