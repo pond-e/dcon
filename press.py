@@ -46,6 +46,19 @@ now_f = time.time()
 # 電圧をテスターで実測する(今回はデータシートから)
 Vref = 1
 
+# 値を0.5区切りにする
+def Punctuate(volt):
+    decimal = volt % 1
+    volt -= decimal
+    if(decimal >= 0.25 and decimal < 0.75):
+        decimal = 0.5
+    elif(decimal >= 0.75):
+        decimal = 1
+    else:
+        decimal = 0
+    volt += decimal
+    return volt
+
 # メインクラス
 if __name__ == '__main__':
  try:
@@ -57,6 +70,10 @@ if __name__ == '__main__':
    volts_0 = ConvertVolts(data_0, Vref)
    volts_1 = ConvertVolts(data_1, Vref)
    volts_2 = ConvertVolts(data_2, Vref)
+
+   volts_0 = Punctuate(volts_0)
+   volts_1 = Punctuate(volts_1)
+   volts_2 = Punctuate(volts_2)
    print("Volts: {0}, {1}, {2}".format(volts_0, volts_1, volts_2))
    now = time.time() - now_f
    value = "%s,%6.2f,%6.2f,%6.2f" % (now, volts_0, volts_1, volts_2) # 時間, 電圧
