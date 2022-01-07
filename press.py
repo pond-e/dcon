@@ -22,7 +22,7 @@ def ReadChannel(channel):
 # 得た値を電圧に変換するメソッド
 # 指定した桁数で切り捨てる
 def ConvertVolts(data,places):
- volts = (data * 5) / float(1023)
+ volts = (data * 5) / float(1)
  volts = round(volts,places)
  return volts
 
