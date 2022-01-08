@@ -84,5 +84,4 @@ if __name__ == '__main__':
        spi.close()
        sys.exit(0)
        f_press.close()
-# 何か入力したら終了
 
