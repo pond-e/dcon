@@ -34,10 +34,11 @@ force_channel_2 = 2
 # 値を読むのを遅らせる
 delay = 0.25
 
+x = 0
 # ファイルへ書き出し準備
 now = datetime.datetime.now()
 # 現在時刻を織り込んだファイル名を生成
-fmt_name = "/home/pi/data/press_logs_{0:%Y%m%d-%H%M%S}.csv".format(now)
+fmt_name = "/home/pi/data/press_logs_{0:%Y%m%d-%H%M%S}_{number}.csv".format(now, number = x)
 f_press = open(fmt_name, 'w')   # 書き込みファイル
 value = "s, V0, V1, V2"  # header行への書き込み内容
 f_press.write(value+"\n")
@@ -61,7 +62,6 @@ def Punctuate(volt):
 
 # メインクラス
 if __name__ == '__main__':
- try:
   while True:
    data_0 = ReadChannel(force_channel_0)
    data_1 = ReadChannel(force_channel_1)
@@ -76,11 +76,13 @@ if __name__ == '__main__':
    volts_2 = Punctuate(volts_2)
    print("Volts: {0}, {1}, {2}".format(volts_0, volts_1, volts_2))
    now = time.time() - now_f
+   print(now)
    value = "%s,%6.2f,%6.2f,%6.2f" % (now, volts_0, volts_1, volts_2) # 時間, 電圧
    f_press.write(value + "\n")  # ファイルを出力
    time.sleep(delay)
+   if(now > 180):
+       spi.close()
+       sys.exit(0)
+       f_press.close()
 # 何か入力したら終了
- except KeyboardInterrupt:
-  spi.close()
-  sys.exit(0)
-  f_press.close()
+
