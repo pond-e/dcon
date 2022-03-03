@@ -62,25 +62,25 @@ def Punctuate(volt):
 
 # メインクラス
 if __name__ == '__main__':
-  while True:
-   data_0 = ReadChannel(force_channel_0)
-   data_1 = ReadChannel(force_channel_1)
-   data_2 = ReadChannel(force_channel_2)
-   print("A/D Converter: {0}, {1}, {2}".format(data_0, data_1, data_2))
-   volts_0 = ConvertVolts(data_0, Vref)
-   volts_1 = ConvertVolts(data_1, Vref)
-   volts_2 = ConvertVolts(data_2, Vref)
+    while True:
+        data_0 = ReadChannel(force_channel_0)
+        data_1 = ReadChannel(force_channel_1)
+        data_2 = ReadChannel(force_channel_2)
+        print("A/D Converter: {0}, {1}, {2}".format(data_0, data_1, data_2))
+        volts_0 = ConvertVolts(data_0, Vref)
+        volts_1 = ConvertVolts(data_1, Vref)
+        volts_2 = ConvertVolts(data_2, Vref)
 
-   volts_0 = Punctuate(volts_0)
-   volts_1 = Punctuate(volts_1)
-   volts_2 = Punctuate(volts_2)
-   print("Volts: {0}, {1}, {2}".format(volts_0, volts_1, volts_2))
-   now = time.time() - now_f
-   print(now)
-   value = "%s,%6.2f,%6.2f,%6.2f" % (now, volts_0, volts_1, volts_2) # 時間, 電圧
-   f_press.write(value + "\n")  # ファイルを出力
-   # time.sleep(delay)
-   if(now > 180):
-       spi.close()
-       sys.exit(0)
-       f_press.close()
+        volts_0 = Punctuate(volts_0)
+        volts_1 = Punctuate(volts_1)
+        volts_2 = Punctuate(volts_2)
+        print("Volts: {0}, {1}, {2}".format(volts_0, volts_1, volts_2))
+        now = time.time() - now_f
+        print(now)
+        value = "%s,%6.2f,%6.2f,%6.2f" % (now, volts_0, volts_1, volts_2) # 時間, 電圧
+        f_press.write(value + "\n")  # ファイルを出力
+        # time.sleep(delay)
+        if(now > 180):
+            spi.close()
+            sys.exit(0)
+            f_press.close()
