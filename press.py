@@ -79,7 +79,7 @@ if __name__ == '__main__':
    print(now)
    value = "%s,%6.2f,%6.2f,%6.2f" % (now, volts_0, volts_1, volts_2) # 時間, 電圧
    f_press.write(value + "\n")  # ファイルを出力
-   time.sleep(delay)
+   # time.sleep(delay)
    if(now > 180):
        spi.close()
        sys.exit(0)
