@@ -32,7 +32,7 @@ force_channel_1 = 1
 force_channel_2 = 2
 
 # 値を読むのを遅らせる
-# delay = 0.25
+delay = 0.1
 
 x = 0
 # ファイルへ書き出し準備
@@ -66,7 +66,8 @@ if __name__ == '__main__':
     s = serial.Serial('/dev/rfcomm0', 9600, timeout=30)
     textlen = 1
     print('wait for bluetooth')
-    x = s.read(textlen)
+    #x = s.read(textlen)
+    #print(x)
     while True:
         data_0 = ReadChannel(force_channel_0)
         data_1 = ReadChannel(force_channel_1)
@@ -87,6 +88,7 @@ if __name__ == '__main__':
         send_data = '[{0}, {1}, {2}, {3}]'.format(volts_0, volts_1, volts_2, now)
         send_data_to_by = send_data.encode()
         s.write(send_data_to_by)
+        #s.read(textlen)
 
         f_press.write(value + "\n")  # ファイルを出力
         # time.sleep(delay)
