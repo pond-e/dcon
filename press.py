@@ -32,7 +32,7 @@ force_channel_1 = 1
 force_channel_2 = 2
 
 # 値を読むのを遅らせる
-# delay = 0.25
+delay = 0.25
 
 x = 0
 # ファイルへ書き出し準備
