@@ -97,7 +97,7 @@ if __name__ == '__main__':
         send_data = '[{0}, {1}, {2}, {3}]'.format(volts_0, volts_1, volts_2, now)
         send_data_to_by = send_data.encode()
         s.write(send_data_to_by)
-        s.read(textlen)
+        s.read(textlen) #普段はコメントアウトなし
 
         f_press.write(value + "\n")  # ファイルを出力
         # time.sleep(delay)
