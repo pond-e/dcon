@@ -6,6 +6,8 @@ import time
 import os
 import datetime
 import serial
+import csv
+import matplotlib.pyplot as plt
 
 # SPIバスを開く
 spi = spidev.SpiDev()
@@ -38,8 +40,9 @@ x = 0
 # ファイルへ書き出し準備
 now = datetime.datetime.now()
 # 現在時刻を織り込んだファイル名を生成
-fmt_name = "/home/pi/data/press_logs_{0:%Y%m%d-%H%M%S}_{number}.csv".format(now, number = x)
-f_press = open(fmt_name, 'w')   # 書き込みファイル
+fmt_name = "/home/pi/data/"
+fmt_name_body = "press_logs_{0:%Y%m%d-%H%M%S}_{number}.csv".format(now, number = x)
+f_press = open(fmt_name+fmt_name_body, 'w')   # 書き込みファイル
 value = "s, V0, V1, V2"  # header行への書き込み内容
 f_press.write(value+"\n")
 now_f = time.time()
@@ -69,7 +72,7 @@ end = 660
 # メインクラス
 if __name__ == '__main__':
     # serial
-    s = serial.Serial('/dev/rfcomm0', 9600, timeout=30)
+    s = serial.Serial('/dev/rfcomm0', 9600)
     textlen = 1
     print('wait for bluetooth')
     #x = s.read(textlen)
@@ -94,11 +97,11 @@ if __name__ == '__main__':
         send_data = '[{0}, {1}, {2}, {3}]'.format(volts_0, volts_1, volts_2, now)
         send_data_to_by = send_data.encode()
         s.write(send_data_to_by)
-        #s.read(textlen)
+        s.read(textlen)
 
         f_press.write(value + "\n")  # ファイルを出力
         # time.sleep(delay)
-        if(now > 180):
+        if(now > 120):
             f_press.close()
 
             with open(template_fname+filename) as f:
@@ -121,6 +124,13 @@ if __name__ == '__main__':
             plt.xlabel('time')
             save_name = filename+'.png'
             plt.savefig(save_name)
-
+            
+            with open(save_name, mode='rb') as pic:
+                s.write(b'1')
+                time.sleep(10)
+                contents = pic.read()
+                s.write(contents)
+                time.sleep(10)
+                s.write(b'2')
             spi.close()
             sys.exit(0)

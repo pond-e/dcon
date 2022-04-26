@@ -63,7 +63,7 @@ def Punctuate(volt):
 # メインクラス
 if __name__ == '__main__':
     # serial
-    s = serial.Serial('/dev/rfcomm0', 9600, timeout=30)
+    s = serial.Serial('/dev/rfcomm0', 9600)
     textlen = 1
     print('wait for bluetooth')
     #x = s.read(textlen)
@@ -88,7 +88,7 @@ if __name__ == '__main__':
         send_data = '[{0}, {1}, {2}, {3}]'.format(volts_0, volts_1, volts_2, now)
         send_data_to_by = send_data.encode()
         s.write(send_data_to_by)
-        #s.read(textlen)
+        s.read(textlen)
 
         f_press.write(value + "\n")  # ファイルを出力
         # time.sleep(delay)
