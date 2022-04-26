@@ -6,6 +6,8 @@ import time
 import os
 import datetime
 import serial
+import csv
+import matplotlib.pyplot as plt
 
 # SPIバスを開く
 spi = spidev.SpiDev()
@@ -38,8 +40,9 @@ x = 0
 # ファイルへ書き出し準備
 now = datetime.datetime.now()
 # 現在時刻を織り込んだファイル名を生成
-fmt_name = "/home/pi/data/press_logs_{0:%Y%m%d-%H%M%S}_{number}.csv".format(now, number = x)
-f_press = open(fmt_name, 'w')   # 書き込みファイル
+fmt_name = "/home/pi/data/"
+fmt_name_body = "press_logs_{0:%Y%m%d-%H%M%S}_{number}.csv".format(now, number = x)
+f_press = open(fmt_name+fmt_name_body, 'w')   # 書き込みファイル
 value = "s, V0, V1, V2"  # header行への書き込み内容
 f_press.write(value+"\n")
 now_f = time.time()
@@ -59,6 +62,12 @@ def Punctuate(volt):
         decimal = 0
     volt += decimal
     return volt
+
+# setting graph
+template_fname = fmt_name
+filename = fmt_name_body
+start = 3030
+end = 660
 
 # メインクラス
 if __name__ == '__main__':
@@ -92,7 +101,36 @@ if __name__ == '__main__':
 
         f_press.write(value + "\n")  # ファイルを出力
         # time.sleep(delay)
-        if(now > 180):
+        if(now > 120):
+            f_press.close()
+
+            with open(template_fname+filename) as f:
+                reader = csv.reader(f)
+                l = [row for row in reader]
+            f = [k[1:] for k in l[start:start+end]]
+            for i in range(len(f)):
+                for j in range(len(f[0])):
+                    f[i][j] = float(f[i][j])
+
+            plt.rc('font', family='serif')
+            fig = plt.figure()
+            x = []
+            x.append([k[0] for k in f])
+            x.append([k[1] for k in f])
+            x.append([k[2] for k in f])
+            plt.plot(x[0], color='gray')
+            plt.plot(x[1], color='red')
+            plt.plot(x[2], color='blue')
+            plt.xlabel('time')
+            save_name = filename+'.png'
+            plt.savefig(save_name)
+            
+            with open(save_name, mode='rb') as pic:
+                s.write(b'1')
+                time.sleep(10)
+                contents = pic.read()
+                s.write(contents)
+                time.sleep(10)
+                s.write(b'2')
             spi.close()
             sys.exit(0)
-            f_press.close()
