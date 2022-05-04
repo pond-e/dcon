@@ -137,6 +137,7 @@ if __name__ == '__main__':
                     s.write(contents)
                     time.sleep(10)
                     s.write(b'2')
+                    time.sleep(30)
                 #spi.close()
                 #sys.exit(0)
                 flag = False

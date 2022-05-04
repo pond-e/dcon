@@ -111,7 +111,7 @@ if __name__ == '__main__':
             send_data = '[{0}, {1}, {2}, {3}]'.format(volts_0, volts_1, volts_2, now)
             send_data_to_by = send_data.encode()
             client_sock.sendall(send_data_to_by+b'\n')
-            #client_sock.recv(1024)  #Todo:普段はコメントアウトなし
+            client_sock.recv(1024)  #Todo:普段はコメントアウトなし
             f_press.write(value + "\n")  # ファイルを出力
             # time.sleep(delay)
             if(now > 120):
@@ -145,6 +145,7 @@ if __name__ == '__main__':
                     client_sock.sendall(contents+b'\n')
                     time.sleep(10)
                     client_sock.sendall(b'2\n')
+                    time.sleep(10)
                 #spi.close()
                 #sys.exit(0)
                 flag = False
